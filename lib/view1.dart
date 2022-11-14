@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
 class View1 extends StatelessWidget {
-  const View1({super.key});
+  final String content;
+
+  const View1({super.key, required this.content});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('View 1')),
-      body: const Center(
-        child: Text('View 1'),
+      appBar: AppBar(
+        title: const Text('View 1'),
+      ),
+      body: Center(
+        child: Text(content),
       ),
     );
   }

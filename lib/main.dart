@@ -38,7 +38,8 @@ class MyHomePage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pushNamed('/view1'),
+                  onPressed: () => Navigator.of(context).pushNamed('/view1',
+                      arguments: {'content': 'Dynamic text'}),
                   child: const Text('View 1')),
             ),
           ),
