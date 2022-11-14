@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_navigation/routes.dart';
-import 'package:page_transition/page_transition.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,15 +18,13 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       onGenerateRoute: (settings) {
         if (routes.containsKey(settings.name)) {
-          final args = settings.arguments as Map<String, dynamic>?;
-          final PageTransitionType pageTranstitionType =
-              args?['transition'] ?? PageTransitionType.scale;
-
-          return PageTransition(
-            child: routes[settings.name]!(context, settings),
-            type: pageTranstitionType,
-            alignment: Alignment.center,
-          );
+          return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  routes[settings.name]!(context),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      ScaleTransition(scale: animation, child: child));
         }
         // Unknown route
         return MaterialPageRoute(builder: (context) => Container());
@@ -61,10 +58,7 @@ class MyHomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed('/view2', arguments: {
-                      'transition': PageTransitionType.fade,
-                    }),
+                onPressed: () => Navigator.of(context).pushNamed('/view2'),
                 child: const Text('View 2')),
           ),
           Padding(
