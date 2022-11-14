@@ -16,7 +16,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      routes: routes,
+      onGenerateRoute: (settings) {
+        if (routes.containsKey(settings.name)) {
+          return PageRouteBuilder(
+              settings: settings,
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  routes[settings.name]!(context),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      ScaleTransition(scale: animation, child: child));
+        }
+        // Unknown route
+        return MaterialPageRoute(builder: (context) => Container());
+      },
     );
   }
 }
