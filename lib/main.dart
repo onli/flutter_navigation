@@ -5,6 +5,8 @@ void main() {
   runApp(const MyApp());
 }
 
+enum Transitions { scale, fade }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,13 +20,28 @@ class MyApp extends StatelessWidget {
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       onGenerateRoute: (settings) {
         if (routes.containsKey(settings.name)) {
+          final args = settings.arguments as Map<String, dynamic>?;
           return PageRouteBuilder(
               settings: settings,
               pageBuilder: (context, animation, secondaryAnimation) =>
                   routes[settings.name]!(context),
               transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) =>
-                      ScaleTransition(scale: animation, child: child));
+                  (context, animation, secondaryAnimation, child) {
+                switch (args?['transition']) {
+                  case Transitions.scale:
+                    return ScaleTransition(scale: animation, child: child);
+                  case Transitions.fade:
+                    return FadeTransition(opacity: animation, child: child);
+                  default:
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, 1.0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    );
+                }
+              });
         }
         // Unknown route
         return MaterialPageRoute(builder: (context) => Container());
@@ -51,14 +68,18 @@ class MyHomePage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pushNamed('/view1',
-                      arguments: {'content': 'Dynamic text'}),
+                          arguments: {
+                            'content': 'Dynamic text',
+                            'transition': Transitions.scale
+                          }),
                   child: const Text('View 1')),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pushNamed('/view2'),
+                onPressed: () => Navigator.of(context).pushNamed('/view2',
+                    arguments: {'transition': Transitions.fade}),
                 child: const Text('View 2')),
           ),
           Padding(
